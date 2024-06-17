@@ -4,6 +4,7 @@ using FeelTags.WebApi.Dal.Repositories;
 using FeelTags.WebApi.Services.Token;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -68,7 +69,9 @@ namespace FeelTags.WebApi.Startup
             return services
                 .AddScoped<ITokenService, TokenService>()
                 .AddScoped<IAccountRepo, AccountRepo>()
-                .AddScoped<IAuthApiService, AuthApiService>();
+                .AddScoped<IAuthApiService, AuthApiService>()
+                .AddScoped<IQuestionRepo, QuestionRepo>()
+                .AddScoped<IQuestionApiService, QuestionApiService>();
         }
 
         public static IServiceCollection ConfigureSettings(this IServiceCollection services)

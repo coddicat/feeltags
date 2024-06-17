@@ -9,8 +9,10 @@ namespace FeelTags.WebApi.ApiServices
 {
     public interface IAuthApiService
     {
+        void Deauthenticate(HttpContext httpContext);
         Task<AccountDTO?> CheckAsync(HttpContext httpContext);
         Task<AccountDTO> SignInWithGoogleAsync(HttpContext httpContext, string idToken);
+        Task<long?> GetAccountIdAsync(HttpContext httpContext);
     }
     public class AuthApiService(        
         IWebHostEnvironment webHostEnvironment, 
@@ -71,24 +73,42 @@ namespace FeelTags.WebApi.ApiServices
 
         public async Task<AccountDTO?> CheckAsync(HttpContext httpContext)
         {
-            ClaimsPrincipal principal = httpContext.User;            
+            Account? dbAccount = await GetAccountAsync(httpContext);
+            
+            return dbAccount is null ? null : AccountDTO.FromDbAccount(dbAccount);
+        }
+
+        private async Task<Account?> GetAccountAsync(HttpContext httpContext)
+        {
+            ClaimsPrincipal principal = httpContext.User;
             if (principal.Identity?.IsAuthenticated != true)
             {
                 return null;
-            } 
+            }
             string? uid = principal.FindFirstValue("user_id");
             if (string.IsNullOrWhiteSpace(uid))
             {
                 return null;
             }
 
-            Account? dbAccount = await accountRepo.GetFirebaseAccountAsync(uid);
-            if (dbAccount is null)
-            {
-                return null;
-            }
+            return await accountRepo.GetFirebaseAccountAsync(uid);
+            
+        }
 
-            return AccountDTO.FromDbAccount(dbAccount);
+        public async Task<long?> GetAccountIdAsync(HttpContext httpContext)
+        {
+            Account? dbAccount = await GetAccountAsync(httpContext);
+            return dbAccount?.Id;
+        }
+
+        public void Deauthenticate(HttpContext httpContext)
+        {
+            HttpResponse response = httpContext.Response;
+            if (response.Headers.ContainsKey("Authorization"))
+            {
+                response.Headers.Remove("Authorization");
+            }
+            response.Cookies.Delete("AccessToken");
         }
     }
 }

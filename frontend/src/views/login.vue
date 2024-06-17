@@ -14,7 +14,7 @@ async function onLoginGoogle() {
 <template>
   <div class="login flex flex-column">
     <div class="flex-grow-1"></div>
-    <div class="flex-grow-0">
+    <div class="flex-grow-0 flex justify-content-center">
       <ProgressSpinner
         v-show="loading"
         stroke-width="0.4rem"
@@ -37,6 +37,10 @@ async function onLoginGoogle() {
 <style lang="scss">
 .login {
   height: 100vh;
+  margin-top: -4rem; //header
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+
   &__btn-google {
     margin-bottom: 0.5rem;
     width: 243px;

@@ -53,12 +53,12 @@ export const useAuthStore = defineStore('auth', () => {
   async function logout() {
     try {
       globalLoading.value++;
-      currentAccount.value = undefined;
       await logoutApi();
     } catch (ex) {
       toastError(`${ex}`);
     } finally {
       globalLoading.value--;
+      currentAccount.value = undefined;
       router.replace({ name: 'login' });
     }
   }

@@ -30,7 +30,7 @@ body {
   margin: 0;
   padding: 0;    
   user-select: none;
-  overflow: hidden;
+  overflow: auto;
 }
 
 a {
@@ -38,10 +38,11 @@ a {
 }
 
 #app {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
+  min-height: 100vh;  
   position: relative;
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .text-monospace {

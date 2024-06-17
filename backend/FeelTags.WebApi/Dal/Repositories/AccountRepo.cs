@@ -6,7 +6,7 @@ namespace FeelTags.WebApi.Dal.Repositories
 {
     public interface IAccountRepo
     {
-        Task CreateOrUpdateFirebaseAccountAsync(string uid, AccountDTO dto);
+        Task<long> CreateOrUpdateFirebaseAccountAsync(string uid, AccountDTO dto);
         Task<Account?> GetFirebaseAccountAsync(string uid);
     }
     public class AccountRepo : IAccountRepo
@@ -23,7 +23,7 @@ namespace FeelTags.WebApi.Dal.Repositories
             return _context.Accounts.FirstOrDefaultAsync(x => x.FirebaseUid == uid);
         }
 
-        public async Task CreateOrUpdateFirebaseAccountAsync(string uid, AccountDTO dto)
+        public async Task<long> CreateOrUpdateFirebaseAccountAsync(string uid, AccountDTO dto)
         {
             Account? account = await _context.Accounts.FirstOrDefaultAsync(x => x.FirebaseUid == uid);
             if (account is null)
@@ -41,7 +41,9 @@ namespace FeelTags.WebApi.Dal.Repositories
 
             dto.MapToDbAccount(account);
 
-            await _context.SaveChangesAsync();            
+            await _context.SaveChangesAsync();
+
+            return account.Id;
         }
     }
 }
